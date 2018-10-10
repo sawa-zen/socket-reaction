@@ -1,0 +1,38 @@
+{
+  "name": "socket-reaction",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/socket-reaction.js",
+  "types": "./socket-reaction.d.ts",
+  "scripts": {
+    "start": "webpack --config webpack.dev.js --watch",
+    "build": "webpack --config webpack.prod.js --display-used-exports",
+    "prepublish": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sawa-zen/socket-reaction.git"
+  },
+  "author": "sawa-zen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sawa-zen/socket-reaction/issues"
+  },
+  "homepage": "https://github.com/sawa-zen/socket-reaction#readme",
+  "devDependencies": {
+    "@babel/core": "^7.0.0-rc.1",
+    "@babel/plugin-proposal-class-properties": "^7.0.0-rc.1",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-rc.1",
+    "@babel/polyfill": "^7.0.0-rc.1",
+    "@babel/preset-env": "^7.0.0-rc.1",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-loader": "^7.1.5",
+    "redux": "^4.0.0",
+    "stats.js": "^0.17.0",
+    "text-loader": "0.0.1",
+    "uglifyjs-webpack-plugin": "^1.3.0",
+    "webpack": "^4.16.5",
+    "webpack-cli": "^3.1.0",
+    "webpack-merge": "^4.1.4"
+  }
+}
