@@ -24,7 +24,10 @@ export const createShader = (gl, shaderSource, shaderType) => {
 /**
  * 2つのシェーダーからプログラムを生成する。
  */
-export const createProgram = (gl, vertexShader, fragmentShader) => {
+export const createProgram = (gl, vertexSource, fragmentSource) => {
+  const vertexShader = createShader(gl, vertexSource, gl.VERTEX_SHADER);
+  const fragmentShader = createShader(gl, fragmentSource, gl.FRAGMENT_SHADER);
+
   // プログラムを生成する。
   const program = gl.createProgram();
 
@@ -39,17 +42,28 @@ export const createProgram = (gl, vertexShader, fragmentShader) => {
   const success = gl.getProgramParameter(program, gl.LINK_STATUS);
   if (!success) {
   // リンク中に問題があった場合、エラーを取得する。
-    throw new Error('program filed to link:' + gl.getProgramInfoLog (program));
+    throw new Error('program filed to link:' + gl.getProgramInfoLog(program));
   }
 
   return program;
 }
 
 /**
- * 二つのscript要素を使ってWebGLProgramを生成する。
+ * VBOを生成する
  */
-export const createProgramFromScripts = (gl, vertexSource, fragmentSource) => {
-  const vertexShader = createShaderFromScript(gl, vertexSource, gl.VERTEX_SHADER);
-  const fragmentShader = createShaderFromScript(gl, fragmentSource, gl.FRAGMENT_SHADER);
-  return createProgram(gl, vertexShader, fragmentShader);
+export const createVbo = (gl, data) => {
+  // バッファオブジェクトの生成
+  const vbo = gl.createBuffer();
+
+  // バッファをバインドする
+  gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+
+  // バッファにデータをセット
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
+
+  // バッファのバインドを無効化
+  gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+  // 生成した VBO を返して終了
+  return vbo;
 }
