@@ -14,25 +14,12 @@ body {
   padding: 0;
 }
 #wrapper {
-  position: fixed;
   width: 100%;
   height: 100%;
-  z-index: 0;
-}
-.contents {
-  position: absolute;
-  height: 200vh;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 </style>
 <body>
   <div id="wrapper"></div>
-  <div class="contents">
-    ==
-  </div>
   <script>
     var socketReaction = new SocketReaction();
     var wrapper = document.getElementById('wrapper');

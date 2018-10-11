@@ -4,6 +4,7 @@
 export default class Matrix4 extends Float32Array {
   constructor() {
     super(16);
+    this.identity();
   }
 
   /**
@@ -14,6 +15,7 @@ export default class Matrix4 extends Float32Array {
     this[4]  = 0; this[5]  = 1; this[6]  = 0; this[7]  = 0;
     this[8]  = 0; this[9]  = 0; this[10] = 1; this[11] = 0;
     this[12] = 0; this[13] = 0; this[14] = 0; this[15] = 1;
+    return this;
   }
 
   /**
@@ -44,6 +46,8 @@ export default class Matrix4 extends Float32Array {
     this[13] = M * b + N * f + O * j + P * n;
     this[14] = M * c + N * g + O * k + P * o;
     this[15] = M * d + N * h + O * l + P * p;
+
+    return this;
   }
 
   /**
@@ -62,6 +66,8 @@ export default class Matrix4 extends Float32Array {
     this[9]  = this[9]  * vec[2];
     this[10] = this[10] * vec[2];
     this[11] = this[11] * vec[2];
+
+    return this;
   }
 
   /**
@@ -72,6 +78,8 @@ export default class Matrix4 extends Float32Array {
     this[13] = this[1] * vec[0] + this[5] * vec[1] + this[9]  * vec[2] + this[13];
     this[14] = this[2] * vec[0] + this[6] * vec[1] + this[10] * vec[2] + this[14];
     this[15] = this[3] * vec[0] + this[7] * vec[1] + this[11] * vec[2] + this[15];
+
+    return this;
   }
 
   /**
@@ -123,6 +131,8 @@ export default class Matrix4 extends Float32Array {
     this[9]  = h * y + l * z + p * A;
     this[10] = i * y + m * z + q * A;
     this[11] = j * y + n * z + r * A;
+
+    return this;
   }
 
   /**
@@ -171,6 +181,8 @@ export default class Matrix4 extends Float32Array {
     this[13] = -(y0 * eyeX + y1 * eyeY + y2 * eyeZ);
     this[14] = -(z0 * eyeX + z1 * eyeY + z2 * eyeZ);
     this[15] = 1;
+
+    return this;
   }
 
   /**
@@ -197,6 +209,8 @@ export default class Matrix4 extends Float32Array {
     this[13] = 0;
     this[14] = -(far * near * 2) / c;
     this[15] = 0;
+
+    return this;
   }
 
   /**
@@ -211,6 +225,8 @@ export default class Matrix4 extends Float32Array {
     this[4]  = b; this[5]  = f; this[6]  = j; this[7]  = n;
     this[8]  = c; this[9]  = g; this[10] = k; this[11] = o;
     this[12] = d; this[13] = h; this[14] = l; this[15] = p;
+
+    return this;
   }
 
   /**
@@ -246,5 +262,37 @@ export default class Matrix4 extends Float32Array {
     this[13] = ( a * z - b * x + c * w) * ivd;
     this[14] = (-m * t + n * r - o * q) * ivd;
     this[15] = ( i * t - j * r + k * q) * ivd;
+
+    return this;
+  }
+
+  /**
+   * 複製する
+   */
+  clone() {
+    const newMat = new Matrix4();
+    const a = this[0],  b = this[1],  c = this[2],  d = this[3],
+          e = this[4],  f = this[5],  g = this[6],  h = this[7],
+          i = this[8],  j = this[9],  k = this[10], l = this[11],
+          m = this[12], n = this[13], o = this[14], p = this[15];
+
+    newMat[0]  = a;
+    newMat[1]  = b;
+    newMat[2]  = c;
+    newMat[3]  = d;
+    newMat[4]  = e;
+    newMat[5]  = f;
+    newMat[6]  = g;
+    newMat[7]  = h;
+    newMat[8]  = i;
+    newMat[9]  = j;
+    newMat[10] = k;
+    newMat[11] = l;
+    newMat[12] = m;
+    newMat[13] = n;
+    newMat[14] = o;
+    newMat[15] = p;
+
+    return newMat;
   }
 }

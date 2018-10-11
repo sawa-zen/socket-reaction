@@ -40,8 +40,11 @@ export const createProgram = (gl, vertexSource, fragmentSource) => {
 
   // リンクが成功したか確認する。
   const success = gl.getProgramParameter(program, gl.LINK_STATUS);
-  if (!success) {
-  // リンク中に問題があった場合、エラーを取得する。
+  if (success) {
+    // 成功していたらプログラムオブジェクトを有効にする
+    gl.useProgram(program);
+  } else {
+    // リンク中に問題があった場合、エラーを取得する。
     throw new Error('program filed to link:' + gl.getProgramInfoLog(program));
   }
 
