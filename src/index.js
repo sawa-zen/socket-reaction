@@ -29,8 +29,8 @@ class SocketReaction {
 
     // モデル(頂点)データ
     const vertexPosition = [
-      0.0,  1.0, 0.0,
-      1.0,  0.0, 0.0,
+       0.0, 1.0, 0.0,
+       1.0, 0.0, 0.0,
       -1.0, 0.0, 0.0
     ];
     // VBOの生成
@@ -60,6 +60,7 @@ class SocketReaction {
   resize(w, h) {
     this._domElement.width = w;
     this._domElement.height = h;
+    this._gl.viewport(0, 0, this._gl.canvas.width, this._gl.canvas.height);
     this._updateMvpMat();
   }
 
