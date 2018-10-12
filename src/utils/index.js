@@ -73,7 +73,7 @@ export const createVbo = (gl, data) => {
 /**
  * IBOを生成する
  */
-export const create_ibo = (gl, data) => {
+export const createIbo = (gl, data) => {
   // バッファオブジェクトの生成
   const ibo = gl.createBuffer();
 
