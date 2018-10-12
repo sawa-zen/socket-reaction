@@ -67,6 +67,24 @@ export const createVbo = (gl, data) => {
   // バッファのバインドを無効化
   gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
-  // 生成した VBO を返して終了
   return vbo;
+}
+
+/**
+ * IBOを生成する
+ */
+export const create_ibo = (gl, data) => {
+  // バッファオブジェクトの生成
+  const ibo = gl.createBuffer();
+
+  // バッファをバインドする
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+
+  // バッファにデータをセット
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Int16Array(data), gl.STATIC_DRAW);
+
+  // バッファのバインドを無効化
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+
+  return ibo;
 }

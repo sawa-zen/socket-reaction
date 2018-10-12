@@ -1,7 +1,7 @@
 /**
  * 行列クラス
  */
-export default class Matrix4 extends Float32Array {
+class Matrix4 extends Float32Array {
   constructor() {
     super(16);
     this.identity();
@@ -296,3 +296,5 @@ export default class Matrix4 extends Float32Array {
     return newMat;
   }
 }
+
+export default Matrix4;
