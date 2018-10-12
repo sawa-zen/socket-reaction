@@ -20,12 +20,21 @@ class SocketReaction {
 
     // stats
     this._stats = new Stats();
-
+    // gl
     this._gl = this._domElement.getContext('webgl') || this._domElement.getContext('experimental-webgl');
-
 
     // プログラムオブジェクトの生成とリンク
     const prg = createProgram(this._gl, vertexSource, fragmentSource);
+
+    // attributeLocationの取得
+    const attLocation = [];
+    attLocation.push(this._gl.getAttribLocation(prg, 'position'));
+    attLocation.push(this._gl.getAttribLocation(prg, 'color'));
+
+    // attributeの要素数(この場合は xyz の3要素)
+    const attStride = [];
+    attStride.push(3);
+    attStride.push(4);
 
     // モデル(頂点)データ
     const vertexPosition = [
@@ -33,19 +42,21 @@ class SocketReaction {
        1.0, 0.0, 0.0,
       -1.0, 0.0, 0.0
     ];
-    // VBOの生成
-    const vbo = createVbo(this._gl, vertexPosition);
-    // VBOをバインド
-    this._gl.bindBuffer(this._gl.ARRAY_BUFFER, vbo);
+    const positionVbo = createVbo(this._gl, vertexPosition);
+    this._gl.bindBuffer(this._gl.ARRAY_BUFFER, positionVbo);
+    this._gl.enableVertexAttribArray(attLocation[0]);
+    this._gl.vertexAttribPointer(attLocation[0], attStride[0], this._gl.FLOAT, false, 0, 0);
 
-    // attributeLocationの取得
-    const attLocation = this._gl.getAttribLocation(prg, 'position');
-    // attributeの要素数(この場合は xyz の3要素)
-    const attStride = 3;
-    // attribute属性を有効にする
-    this._gl.enableVertexAttribArray(attLocation);
-    // attribute属性を登録
-    this._gl.vertexAttribPointer(attLocation, attStride, this._gl.FLOAT, false, 0, 0);
+    // 頂点の色情報を格納する配列
+    var vertexColor = [
+      1.0, 0.0, 0.0, 1.0,
+      0.0, 1.0, 0.0, 1.0,
+      0.0, 0.0, 1.0, 1.0
+    ];
+    const colorVbo = createVbo(this._gl, vertexColor);
+    this._gl.bindBuffer(this._gl.ARRAY_BUFFER, colorVbo);
+    this._gl.enableVertexAttribArray(attLocation[1]);
+    this._gl.vertexAttribPointer(attLocation[1], attStride[1], this._gl.FLOAT, false, 0, 0);
 
     this._updateMvpMat();
     this._uniLocation = this._gl.getUniformLocation(prg, 'mvpMatrix');
