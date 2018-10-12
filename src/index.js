@@ -26,26 +26,17 @@ class SocketReaction {
     // プログラムオブジェクトの生成とリンク
     const prg = createProgram(this._gl, vertexSource, fragmentSource);
 
-    // attributeLocationの取得
-    const attLocation = [];
-    attLocation.push(this._gl.getAttribLocation(prg, 'position'));
-    attLocation.push(this._gl.getAttribLocation(prg, 'color'));
-
-    // attributeの要素数(この場合は xyz の3要素)
-    const attStride = [];
-    attStride.push(3);
-    attStride.push(4);
-
     // モデル(頂点)データ
     const vertexPosition = [
-       0.0, 1.0, 0.0,
+       0.0, 1.5, 0.0,
        1.0, 0.0, 0.0,
       -1.0, 0.0, 0.0
     ];
     const positionVbo = createVbo(this._gl, vertexPosition);
+    const positionAttrLoc = this._gl.getAttribLocation(prg, 'position');
     this._gl.bindBuffer(this._gl.ARRAY_BUFFER, positionVbo);
-    this._gl.enableVertexAttribArray(attLocation[0]);
-    this._gl.vertexAttribPointer(attLocation[0], attStride[0], this._gl.FLOAT, false, 0, 0);
+    this._gl.enableVertexAttribArray(positionAttrLoc);
+    this._gl.vertexAttribPointer(positionAttrLoc, 3, this._gl.FLOAT, false, 0, 0);
 
     // 頂点の色情報を格納する配列
     var vertexColor = [
@@ -54,9 +45,10 @@ class SocketReaction {
       0.0, 0.0, 1.0, 1.0
     ];
     const colorVbo = createVbo(this._gl, vertexColor);
+    const colorAttrLoc = this._gl.getAttribLocation(prg, 'color');
     this._gl.bindBuffer(this._gl.ARRAY_BUFFER, colorVbo);
-    this._gl.enableVertexAttribArray(attLocation[1]);
-    this._gl.vertexAttribPointer(attLocation[1], attStride[1], this._gl.FLOAT, false, 0, 0);
+    this._gl.enableVertexAttribArray(colorAttrLoc);
+    this._gl.vertexAttribPointer(colorAttrLoc, 4, this._gl.FLOAT, false, 0, 0);
 
     this._updateMvpMat();
     this._uniLocation = this._gl.getUniformLocation(prg, 'mvpMatrix');
