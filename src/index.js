@@ -28,7 +28,7 @@ class SocketReaction {
 
     // モデル(頂点)データ
     const vertexPosition = [
-       0.0, 1.5, 0.0,
+       0.0, 1.0, 0.0,
        1.0, 0.0, 0.0,
       -1.0, 0.0, 0.0
     ];
@@ -39,7 +39,7 @@ class SocketReaction {
     this._gl.vertexAttribPointer(positionAttrLoc, 3, this._gl.FLOAT, false, 0, 0);
 
     // 頂点の色情報を格納する配列
-    var vertexColor = [
+    const vertexColor = [
       1.0, 0.0, 0.0, 1.0,
       0.0, 1.0, 0.0, 1.0,
       0.0, 0.0, 1.0, 1.0
@@ -50,7 +50,6 @@ class SocketReaction {
     this._gl.enableVertexAttribArray(colorAttrLoc);
     this._gl.vertexAttribPointer(colorAttrLoc, 4, this._gl.FLOAT, false, 0, 0);
 
-    this._updateMvpMat();
     this._uniLocation = this._gl.getUniformLocation(prg, 'mvpMatrix');
 
     // 描画開始
@@ -64,7 +63,6 @@ class SocketReaction {
     this._domElement.width = w;
     this._domElement.height = h;
     this._gl.viewport(0, 0, this._gl.canvas.width, this._gl.canvas.height);
-    this._updateMvpMat();
   }
 
   dispose() {
@@ -72,19 +70,21 @@ class SocketReaction {
     SocketReaction.instance = null;
   }
 
-  _updateMvpMat() {
-    // モデル座標変換行列
-    const mMatrix = new Matrix4();
-    // ビュー座標変換行列
-    const vMatrix = new Matrix4().lookAt([0.0, 1.0, 3.0], [0, 0, 0], [0, 1, 0]);
-    // プロジェクション座標変換行列
-    const pMatrix = new Matrix4().perspective(90, this._domElement.width / this._domElement.height, 0.1, 100);
-    // 各行列を掛け合わせ座標変換行列を完成させる
-    this._mvpMatrix = pMatrix.multiply(vMatrix).multiply(mMatrix);
-  }
-
   _render = () => {
     this._stats.begin();
+
+    // モデル座標変換行列
+    const mMatrix = new Matrix4();
+
+    this._count += 2;
+    // カウンタを元にラジアンを算出
+    const rad = (this._count % 360) * Math.PI / 180;
+
+    // モデル1は円の軌道を描き移動する
+    const x = Math.cos(rad) * 3;
+    const y = Math.sin(rad) * 3;
+    mMatrix.translate([x, y + 1.0, 0.0]);
+    mMatrix.rotate(rad, [0, 1, 0]);
 
     // canvasを黒でクリア(初期化)する
     this._gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -92,8 +92,18 @@ class SocketReaction {
     this._gl.clearDepth(1.0);
     // canvasを初期化
     this._gl.clear(this._gl.COLOR_BUFFER_BIT | this._gl.DEPTH_BUFFER_BIT);
+
+    // ビュー座標変換行列
+    const vMatrix = new Matrix4().lookAt([0.0, 0.0, 5.0], [0, 0, 0], [0, 1, 0]);
+    // プロジェクション座標変換行列
+    const pMatrix = new Matrix4().perspective(90, this._domElement.width / this._domElement.height, 0.1, 100);
+    // ビュープロジェクション座標変換行列
+    const vpMatrix = pMatrix.multiply(vMatrix);
+    // 各行列を掛け合わせ座標変換行列を完成させる
+    const mvpMatrix = vpMatrix.multiply(mMatrix);
+
     // uniformLocationへ座標変換行列を登録
-    this._gl.uniformMatrix4fv(this._uniLocation, false, this._mvpMatrix);
+    this._gl.uniformMatrix4fv(this._uniLocation, false, mvpMatrix);
     // モデルの描画
     this._gl.drawArrays(this._gl.TRIANGLES, 0, 3);
     // コンテキストの再描画
