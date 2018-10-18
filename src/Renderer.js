@@ -69,28 +69,10 @@ class Renderer {
   _createProgram(obj, container) {
     const data = { obj };
     if (obj.type === 'Mesh') {
-      const geometry = obj.geometry;
       const material = obj.material;
       // プログラムオブジェクトの生成とリンク
       const prg = createProgram(this._gl, material.vertexShader, material.fragmentShader);
-
-      Object.keys(geometry.attributes).map(key => {
-        const attribute = geometry.attributes[key];
-        const verticies = attribute.verticies;
-        const stride = attribute.stride;
-        const positionVbo = createVbo(this._gl, verticies);
-        const positionAttrLoc = this._gl.getAttribLocation(prg, key);
-        this._gl.bindBuffer(this._gl.ARRAY_BUFFER, positionVbo);
-        this._gl.enableVertexAttribArray(positionAttrLoc);
-        this._gl.vertexAttribPointer(positionAttrLoc, stride, this._gl.FLOAT, false, 0, 0);
-      });
-
       data.program = prg;
-      data.uniLocation = {
-        mMatrix: this._gl.getUniformLocation(prg, 'mMatrix'),
-        vMatrix: this._gl.getUniformLocation(prg, 'vMatrix'),
-        pMatrix: this._gl.getUniformLocation(prg, 'pMatrix')
-      };
     }
 
     data.children = [];
@@ -118,11 +100,34 @@ class Renderer {
 
       // Meshでなければ無視する
       if (obj.type === 'Mesh') {
+        const geometry = obj.geometry;
+        const material = obj.material;
+        const prg = child.program;
+
+        Object.keys(geometry.attributes).map(key => {
+          const attribute = geometry.attributes[key];
+          const verticies = attribute.verticies;
+          const stride = attribute.stride;
+          const positionVbo = createVbo(this._gl, verticies);
+          const positionAttrLoc = this._gl.getAttribLocation(prg, key);
+          this._gl.bindBuffer(this._gl.ARRAY_BUFFER, positionVbo);
+          this._gl.enableVertexAttribArray(positionAttrLoc);
+          this._gl.vertexAttribPointer(positionAttrLoc, stride, this._gl.FLOAT, false, 0, 0);
+        });
+
+        const uniLocation = {
+          mMatrix: this._gl.getUniformLocation(prg, 'mMatrix'),
+          vMatrix: this._gl.getUniformLocation(prg, 'vMatrix'),
+          pMatrix: this._gl.getUniformLocation(prg, 'pMatrix')
+        };
+
         this._gl.useProgram(child.program);
+
         // uniformLocationへ座標変換行列を登録
-        this._gl.uniformMatrix4fv(child.uniLocation.mMatrix, false, mMatrix);
-        this._gl.uniformMatrix4fv(child.uniLocation.vMatrix, false, vMatrix);
-        this._gl.uniformMatrix4fv(child.uniLocation.pMatrix, false, pMatrix);
+        this._gl.uniformMatrix4fv(uniLocation.mMatrix, false, mMatrix);
+        this._gl.uniformMatrix4fv(uniLocation.vMatrix, false, vMatrix);
+        this._gl.uniformMatrix4fv(uniLocation.pMatrix, false, pMatrix);
+
         // モデルの描画
         this._gl.drawArrays(this._gl.TRIANGLES, 0, 3);
       }

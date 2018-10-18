@@ -22,19 +22,20 @@ class Scene extends Object3D {
       0.0, 1.0, 0.0, 1.0,
       0.0, 0.0, 1.0, 1.0
     ]);
+
     const material = new Material(vertexShader, fragmentShader);
     this._mesh = new Mesh(geometry, material);
     this.add(this._mesh);
 
     const geometry2 = new Geometry();
     geometry2.addAttribute('position', 3, [
-       0.0,  0.5, 0.0,
+       0.0,  1.5, 0.0,
        1.0, -0.5, 0.0,
       -1.0, -0.5, 0.0
     ]);
     geometry2.addAttribute('color', 4, [
       1.0, 0.0, 0.0, 1.0,
-      0.0, 1.0, 0.0, 1.0,
+      0.0, 1.0, 1.0, 1.0,
       0.0, 0.0, 1.0, 1.0
     ]);
     const material2 = new Material(vertexShader, fragmentShader);
