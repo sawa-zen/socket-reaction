@@ -1,6 +1,8 @@
 import Object3D from './Object3D';
 
 class Mesh extends Object3D {
+  _type = 'Mesh';
+
   get geometry() {
     return this._geometry;
   }
