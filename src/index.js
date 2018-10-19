@@ -1,5 +1,3 @@
-import "@babel/polyfill";
-import Stats from './Stats';
 import Renderer from './Renderer';
 import Scene from './Scene';
 
@@ -13,8 +11,6 @@ class SocketReaction {
       return SocketReaction.instance;
     }
 
-    // stats
-    this._stats = new Stats();
     // レンダラー
     this._renderer = new Renderer();
 
@@ -40,13 +36,9 @@ class SocketReaction {
   }
 
   _update = () => {
-    this._stats.begin();
-
     this._scene.update()
 
     this._renderer.render();
-
-    this._stats.end();
 
     this._animationFrameId = requestAnimationFrame(this._update);
   };

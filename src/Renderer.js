@@ -23,7 +23,6 @@ class Renderer {
   _children = [];
   add(obj) {
     this._createProgram(obj, this._children);
-    console.info(this._children);
   }
 
   setSize(w, h) {
