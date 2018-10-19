@@ -2,6 +2,7 @@ import Matrix4 from './Matrix4';
 import {
   createProgram,
   createVbo,
+  createIbo,
 } from './utils';
 import deepForEach from './utils/deepForEach';
 
@@ -127,8 +128,22 @@ class Renderer {
         this._gl.uniformMatrix4fv(uniLocation.vMatrix, false, vMatrix);
         this._gl.uniformMatrix4fv(uniLocation.pMatrix, false, pMatrix);
 
-        // モデルの描画
-        this._gl.drawArrays(this._gl.TRIANGLES, 0, 3);
+        // IBOを生成
+        if (geometry.index.length) {
+          const ibo = createIbo(this._gl, geometry.index);
+          // IBOをバインドして登録する
+          this._gl.bindBuffer(this._gl.ELEMENT_ARRAY_BUFFER, ibo);
+          // モデルの描画
+          this._gl.drawElements(
+            this._gl.TRIANGLES,
+            geometry.index.length,
+            this._gl.UNSIGNED_SHORT,
+            0
+          );
+        } else {
+          // モデルの描画
+          this._gl.drawArrays(this._gl.TRIANGLES, 0, 3);
+        }
       }
 
       if (child.children) {
