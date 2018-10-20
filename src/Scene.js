@@ -26,7 +26,7 @@ class Scene extends Object3D {
     ]);
     geometry.setIndex([
       0, 1, 2,
-      1, 2, 3
+      3, 2, 1
     ]);
     const material = new Material(vertexShader, fragmentShader);
     this._mesh = new Mesh(geometry, material);
@@ -48,7 +48,7 @@ class Scene extends Object3D {
     ]);
     geometry2.setIndex([
       0, 1, 2,
-      1, 2, 3
+      3, 2, 1
     ]);
     const material2 = new Material(vertexShader, fragmentShader);
     this._mesh2 = new Mesh(geometry2, material2);

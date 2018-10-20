@@ -19,6 +19,7 @@ class Renderer {
 
     // gl
     this._gl = this._domElement.getContext('webgl') || this._domElement.getContext('experimental-webgl');
+    this._gl.enable(this._gl.CULL_FACE);
   }
 
   _children = [];
