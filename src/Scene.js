@@ -13,32 +13,42 @@ class Scene extends Object3D {
 
     const geometry = new Geometry();
     geometry.addAttribute('position', 3, [
+       0.0,  1.5,  0.0,
+       1.0,  0.0,  1.0,
+       1.0,  0.0, -1.0,
+      -1.0,  0.0, -1.0,
+      -1.0,  0.0,  1.0,
+       0.0, -1.5,  0.0,
+    ]);
+    geometry.addAttribute('color', 4, [
+      1.0, 0.0, 0.0, 1.0, // 赤
+      0.0, 1.0, 0.0, 1.0, // 緑
+      0.0, 0.0, 1.0, 1.0, // 青
+      1.0, 0.0, 1.0, 1.0, // 藍
+      0.0, 1.0, 1.0, 1.0, // 水
+      1.0, 1.0, 0.0, 1.0  // 黄
+    ]);
+    geometry.setIndex([
+      0, 1, 2,
+      0, 2, 3,
+      0, 3, 4,
+      0, 4, 1,
+      5, 2, 1,
+      5, 3, 2,
+      5, 4, 3,
+      5, 1, 4,
+    ]);
+    const material = new Material(vertexShader, fragmentShader);
+    this._mesh = new Mesh(geometry, material);
+    this.add(this._mesh);
+
+    const group = new Object3D();
+    const geometry2 = new Geometry();
+    geometry2.addAttribute('position', 3, [
        0.0,  1.0,  0.0,
        1.0,  0.0,  0.0,
       -1.0,  0.0,  0.0,
        0.0, -1.0,  0.0
-    ]);
-    geometry.addAttribute('color', 4, [
-      1.0, 0.0, 0.0, 1.0,
-      0.0, 1.0, 0.0, 1.0,
-      0.0, 0.0, 1.0, 1.0,
-      1.0, 1.0, 1.0, 1.0
-    ]);
-    geometry.setIndex([
-      0, 1, 2,
-      3, 2, 1
-    ]);
-    const material = new Material(vertexShader, fragmentShader);
-    this._mesh = new Mesh(geometry, material);
-    this._mesh.position[2] = 1.0;
-    this.add(this._mesh);
-
-    const geometry2 = new Geometry();
-    geometry2.addAttribute('position', 3, [
-       0.0,  1.0,  1.0,
-       1.0,  0.0,  0.0,
-      -1.0,  0.0,  0.0,
-       0.0, -1.0,  1.0
     ]);
     geometry2.addAttribute('color', 4, [
       1.0, 0.0, 0.0, 1.0,
@@ -48,12 +58,11 @@ class Scene extends Object3D {
     ]);
     geometry2.setIndex([
       0, 1, 2,
-      3, 2, 1
+      3, 2, 1,
     ]);
     const material2 = new Material(vertexShader, fragmentShader);
     this._mesh2 = new Mesh(geometry2, material2);
-    this._mesh2.position[0] = 0.0;
-    this.add(this._mesh2);
+    // this.add(this._mesh2);
   }
 
   update() {
@@ -64,8 +73,8 @@ class Scene extends Object3D {
     // モデル1は円の軌道を描き移動する
     const x = Math.cos(rad) * 3;
     const y = Math.sin(rad) * 3;
-    // this._mesh.position[0] = x;
-    this._mesh.position[1] = y;
+
+    this._mesh.position[1] = y / 3;
 
     this.rotate[0] = rad;
   }
