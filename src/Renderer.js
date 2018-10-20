@@ -19,7 +19,11 @@ class Renderer {
 
     // gl
     this._gl = this._domElement.getContext('webgl') || this._domElement.getContext('experimental-webgl');
+
+    // カリングを有効
     this._gl.enable(this._gl.CULL_FACE);
+
+    // 震度テストを有効
     this._gl.enable(this._gl.DEPTH_TEST);
     this._gl.depthFunc(this._gl.LEQUAL);
   }
