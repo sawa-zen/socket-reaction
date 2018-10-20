@@ -45,24 +45,27 @@ class Scene extends Object3D {
     const group = new Object3D();
     const geometry2 = new Geometry();
     geometry2.addAttribute('position', 3, [
-       0.0,  1.0,  0.0,
-       1.0,  0.0,  0.0,
-      -1.0,  0.0,  0.0,
-       0.0, -1.0,  0.0
+       2.0, -4.0,  0.0,
+      -2.0, -4.0,  0.0,
+      -2.0,  4.0,  0.0,
+       2.0,  4.0,  0.0
     ]);
     geometry2.addAttribute('color', 4, [
-      1.0, 0.0, 0.0, 1.0,
-      0.0, 1.0, 0.0, 1.0,
-      0.0, 0.0, 1.0, 1.0,
-      1.0, 1.0, 1.0, 1.0
+      0.5, 0.5, 0.5, 1.0,
+      0.5, 0.5, 0.5, 1.0,
+      0.5, 0.5, 0.5, 1.0,
+      0.5, 0.5, 0.5, 1.0
     ]);
     geometry2.setIndex([
       0, 1, 2,
-      3, 2, 1,
+      0, 2, 3,
+      2, 1, 0,
+      3, 2, 0,
     ]);
     const material2 = new Material(vertexShader, fragmentShader);
     this._mesh2 = new Mesh(geometry2, material2);
-    // this.add(this._mesh2);
+    this._mesh2.position[2] = 3.0;
+    this.add(this._mesh2);
   }
 
   update() {

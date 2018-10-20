@@ -20,6 +20,8 @@ class Renderer {
     // gl
     this._gl = this._domElement.getContext('webgl') || this._domElement.getContext('experimental-webgl');
     this._gl.enable(this._gl.CULL_FACE);
+    this._gl.enable(this._gl.DEPTH_TEST);
+    this._gl.depthFunc(this._gl.LEQUAL);
   }
 
   _children = [];
@@ -42,7 +44,7 @@ class Renderer {
 
     // ビュー座標変換行列
     const camera = {
-      position: [0.0, 0.0, 5.0],
+      position: [0.0, 0.0, 10.0],
       center: [0, 0, 0],
       up: [0, 1, 0]
     };
