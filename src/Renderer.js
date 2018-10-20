@@ -23,7 +23,7 @@ class Renderer {
     // カリングを有効
     this._gl.enable(this._gl.CULL_FACE);
 
-    // 震度テストを有効
+    // 深度テストを有効
     this._gl.enable(this._gl.DEPTH_TEST);
     this._gl.depthFunc(this._gl.LEQUAL);
   }
