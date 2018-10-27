@@ -38,7 +38,10 @@ class Scene extends Object3D {
       5, 4, 3,
       5, 1, 4,
     ]);
-    const material = new Material(vertexShader, fragmentShader);
+    const material = new Material({
+      vertexShader,
+      fragmentShader
+    });
     this._mesh = new Mesh(geometry, material);
     this.add(this._mesh);
 
@@ -51,18 +54,20 @@ class Scene extends Object3D {
        2.0,  4.0,  0.0
     ]);
     geometry2.addAttribute('color', 4, [
-      0.5, 0.5, 0.5, 1.0,
-      0.5, 0.5, 0.5, 1.0,
-      0.5, 0.5, 0.5, 1.0,
-      0.5, 0.5, 0.5, 1.0
+      0.5, 0.5, 0.5, 0.5,
+      0.5, 0.5, 0.5, 0.5,
+      0.5, 0.5, 0.5, 0.5,
+      0.5, 0.5, 0.5, 0.5
     ]);
     geometry2.setIndex([
       0, 1, 2,
       0, 2, 3,
-      2, 1, 0,
-      3, 2, 0,
     ]);
-    const material2 = new Material(vertexShader, fragmentShader);
+    const material2 = new Material({
+      vertexShader,
+      fragmentShader,
+      transparent: true
+    });
     this._mesh2 = new Mesh(geometry2, material2);
     this._mesh2.position[2] = 3.0;
     this.add(this._mesh2);

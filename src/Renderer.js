@@ -135,6 +135,14 @@ class Renderer {
         this._gl.uniformMatrix4fv(uniLocation.vMatrix, false, vMatrix);
         this._gl.uniformMatrix4fv(uniLocation.pMatrix, false, pMatrix);
 
+        if (material.transparent) {
+          // ブレンディングを有効
+          this._gl.enable(this._gl.BLEND);
+          this._gl.blendFunc(this._gl.SRC_ALPHA, this._gl.ONE_MINUS_SRC_ALPHA);
+        } else {
+          this._gl.disable(this._gl.BLEND);
+        }
+
         // IBOを生成
         if (geometry.index.length) {
           const ibo = createIbo(this._gl, geometry.index);

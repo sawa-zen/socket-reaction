@@ -12,10 +12,15 @@ class Material {
     return this._fragmentShader;
   }
 
-  constructor(vertexShader, fragmentShader, uniform = {}) {
-    this._vertexShader = vertexShader;
-    this._fragmentShader = fragmentShader;
-    this._uniform = uniform;
+  get transparent() {
+    return this._transparent;
+  }
+
+  constructor(parametars = {}) {
+    this._uniform = parametars.uniform || {};
+    this._vertexShader = parametars.vertexShader;
+    this._fragmentShader = parametars.fragmentShader;
+    this._transparent = parametars.transparent;
   }
 }
 
