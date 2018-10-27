@@ -20,9 +20,6 @@ class Renderer {
     // gl
     this._gl = this._domElement.getContext('webgl') || this._domElement.getContext('experimental-webgl');
 
-    // カリングを有効
-    this._gl.enable(this._gl.CULL_FACE);
-
     // 深度テストを有効
     this._gl.enable(this._gl.DEPTH_TEST);
     this._gl.depthFunc(this._gl.LEQUAL);
@@ -141,6 +138,21 @@ class Renderer {
           this._gl.blendFunc(this._gl.SRC_ALPHA, this._gl.ONE_MINUS_SRC_ALPHA);
         } else {
           this._gl.disable(this._gl.BLEND);
+        }
+
+        switch (material.side) {
+          case 'SIDE_DOUBLE':
+            this._gl.disable(this._gl.CULL_FACE);
+            break;
+          case 'SIDE_BACK':
+            this._gl.enable(this._gl.CULL_FACE);
+            this._gl.frontFace(this._gl.CW);
+            break;
+          case 'SIDE_FRONT':
+          default:
+            this._gl.enable(this._gl.CULL_FACE);
+            this._gl.frontFace(this._gl.CCW);
+            break;
         }
 
         // IBOを生成

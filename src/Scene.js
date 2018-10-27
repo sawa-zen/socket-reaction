@@ -21,12 +21,12 @@ class Scene extends Object3D {
        0.0, -1.5,  0.0,
     ]);
     geometry.addAttribute('color', 4, [
-      1.0, 0.0, 0.0, 1.0, // 赤
-      0.0, 1.0, 0.0, 1.0, // 緑
-      0.0, 0.0, 1.0, 1.0, // 青
-      1.0, 0.0, 1.0, 1.0, // 藍
-      0.0, 1.0, 1.0, 1.0, // 水
-      1.0, 1.0, 0.0, 1.0  // 黄
+      1.0, 0.0, 0.0, 0.5, // 赤
+      0.0, 1.0, 0.0, 0.5, // 緑
+      0.0, 0.0, 1.0, 0.5, // 青
+      1.0, 0.0, 1.0, 0.5, // 藍
+      0.0, 1.0, 1.0, 0.5, // 水
+      1.0, 1.0, 0.0, 0.5  // 黄
     ]);
     geometry.setIndex([
       0, 1, 2,
@@ -40,7 +40,7 @@ class Scene extends Object3D {
     ]);
     const material = new Material({
       vertexShader,
-      fragmentShader
+      fragmentShader,
     });
     this._mesh = new Mesh(geometry, material);
     this.add(this._mesh);
@@ -66,7 +66,8 @@ class Scene extends Object3D {
     const material2 = new Material({
       vertexShader,
       fragmentShader,
-      transparent: true
+      transparent: true,
+      side: 'SIDE_DOUBLE'
     });
     this._mesh2 = new Mesh(geometry2, material2);
     this._mesh2.position[2] = 3.0;
