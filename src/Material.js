@@ -20,12 +20,17 @@ class Material {
     return this._side;
   }
 
+  get blending() {
+    return this._blending;
+  }
+
   constructor(parametars = {}) {
     this._uniform = parametars.uniform || {};
     this._vertexShader = parametars.vertexShader;
     this._fragmentShader = parametars.fragmentShader;
     this._transparent = !!parametars.transparent;
     this._side = parametars.side || 'SIDE_FRONT';
+    this._blending = parametars.blending || 'BLENDING_NO';
   }
 }
 
