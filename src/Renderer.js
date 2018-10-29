@@ -5,6 +5,7 @@ import {
   createIbo,
   switchBlending,
   switchCulling,
+  drawFace,
 } from './utils';
 import deepForEach from './utils/deepForEach';
 
@@ -140,22 +141,8 @@ class Renderer {
         // カリングを切り替える
         switchCulling(this._gl, material.side);
 
-        // IBOを生成
-        if (geometry.index.length) {
-          const ibo = createIbo(this._gl, geometry.index);
-          // IBOをバインドして登録する
-          this._gl.bindBuffer(this._gl.ELEMENT_ARRAY_BUFFER, ibo);
-          // モデルの描画
-          this._gl.drawElements(
-            this._gl.TRIANGLES,
-            geometry.index.length,
-            this._gl.UNSIGNED_SHORT,
-            0
-          );
-        } else {
-          // モデルの描画
-          this._gl.drawArrays(this._gl.TRIANGLES, 0, 3);
-        }
+        // 面を描画
+        drawFace(this._gl, geometry.index);
       }
 
       if (child.children) {

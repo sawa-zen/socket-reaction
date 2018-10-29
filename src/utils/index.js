@@ -160,6 +160,27 @@ export const switchBlending = (gl, transparent) => {
 }
 
 /**
+ * 面を描画
+ */
+export const drawFace = (gl, index) => {
+  if (index.length) {
+    const ibo = createIbo(gl, index);
+    // IBOをバインドして登録する
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+    // モデルの描画
+    gl.drawElements(
+      gl.TRIANGLES,
+      index.length,
+      gl.UNSIGNED_SHORT,
+      0
+    );
+  } else {
+    // モデルの描画
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
+}
+
+/**
  * ユニークな文字列を作成
  */
 export const getUniqueStr = (strong = 1000) => {
