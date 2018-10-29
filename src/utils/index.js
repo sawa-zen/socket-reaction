@@ -124,6 +124,23 @@ export const createIbo = (gl, data) => {
 }
 
 /**
+ * アトリビュートを登録
+ */
+export const registerAttribute = (
+  gl,
+  prg,
+  key,
+  verticies,
+  stride,
+) => {
+  const vbo = createVbo(gl, verticies);
+  const attrLoc = gl.getAttribLocation(prg, key);
+  gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+  gl.enableVertexAttribArray(attrLoc);
+  gl.vertexAttribPointer(attrLoc, stride, gl.FLOAT, false, 0, 0);
+}
+
+/**
  * カリングの切り替え
  */
 export const switchCulling = (gl, side) => {

@@ -3,6 +3,7 @@ import {
   createProgram,
   createVbo,
   createIbo,
+  registerAttribute,
   switchBlending,
   switchCulling,
   drawFace,
@@ -112,26 +113,26 @@ class Renderer {
         const material = obj.material;
         const prg = child.program;
 
+        // 使用するプログラムを指定
+        this._gl.useProgram(prg);
+
         Object.keys(geometry.attributes).map(key => {
           const attribute = geometry.attributes[key];
-          const verticies = attribute.verticies;
-          const stride = attribute.stride;
-          const positionVbo = createVbo(this._gl, verticies);
-          const positionAttrLoc = this._gl.getAttribLocation(prg, key);
-          this._gl.bindBuffer(this._gl.ARRAY_BUFFER, positionVbo);
-          this._gl.enableVertexAttribArray(positionAttrLoc);
-          this._gl.vertexAttribPointer(positionAttrLoc, stride, this._gl.FLOAT, false, 0, 0);
+          registerAttribute(
+            this._gl,
+            prg,
+            key,
+            attribute.verticies,
+            attribute.stride,
+          );
         });
 
+        // uniformLocationへ座標変換行列を登録
         const uniLocation = {
           mMatrix: this._gl.getUniformLocation(prg, 'mMatrix'),
           vMatrix: this._gl.getUniformLocation(prg, 'vMatrix'),
           pMatrix: this._gl.getUniformLocation(prg, 'pMatrix')
         };
-
-        this._gl.useProgram(child.program);
-
-        // uniformLocationへ座標変換行列を登録
         this._gl.uniformMatrix4fv(uniLocation.mMatrix, false, mMatrix);
         this._gl.uniformMatrix4fv(uniLocation.vMatrix, false, vMatrix);
         this._gl.uniformMatrix4fv(uniLocation.pMatrix, false, pMatrix);
