@@ -6,6 +6,7 @@ import {
   switchBlending,
   switchCulling,
   drawFace,
+  clearColor,
 } from './utils';
 import deepForEach from './utils/deepForEach';
 
@@ -41,7 +42,7 @@ class Renderer {
 
   render() {
     // canvasをクリア
-    this._clearCanvas();
+    clearColor(this._gl);
 
     // モデル座標変換行列のベース
     const mMatrix = new Matrix4();
@@ -59,7 +60,12 @@ class Renderer {
     );
 
     // プロジェクション座標変換行列
-    const pMatrix = new Matrix4().perspective(90, this._domElement.width / this._domElement.height, 0.1, 100);
+    const pMatrix = new Matrix4().perspective(
+      90,
+      this._domElement.width / this._domElement.height,
+      0.1,
+      100,
+    );
 
     // children分回す
     this._renderChild(
@@ -78,7 +84,11 @@ class Renderer {
     if (obj.type === 'Mesh') {
       const material = obj.material;
       // プログラムオブジェクトの生成とリンク
-      const prg = createProgram(this._gl, material.vertexShader, material.fragmentShader);
+      const prg = createProgram(
+        this._gl,
+        material.vertexShader,
+        material.fragmentShader,
+      );
       data.program = prg;
     }
 
@@ -88,15 +98,6 @@ class Renderer {
     });
 
     container.push(data);
-  }
-
-  _clearCanvas() {
-    // canvasを黒でクリア(初期化)-5る
-    this._gl.clearColor(0.0, 0.0, 0.0, 1.0);
-    // canvasを初期化する際の深度を設定する
-    this._gl.clearDepth(1.0);
-    // canvasを初期化
-    this._gl.clear(this._gl.COLOR_BUFFER_BIT | this._gl.DEPTH_BUFFER_BIT);
   }
 
   _renderChild(children, parentModelMatrix, vMatrix, pMatrix) {

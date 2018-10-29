@@ -181,6 +181,27 @@ export const drawFace = (gl, index) => {
 }
 
 /**
+ * 描画をクリア
+ */
+export const clearColor = (
+  gl,
+  color = [0.0, 0.0, 0.0, 1.0],
+  depth = 1.0,
+) => {
+  // canvasを単色でクリア(初期化)
+  gl.clearColor(
+    color[0],
+    color[1],
+    color[2],
+    color[3],
+  );
+  // canvasを初期化する際の深度を設定する
+  gl.clearDepth(depth);
+  // canvasを初期化
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+}
+
+/**
  * ユニークな文字列を作成
  */
 export const getUniqueStr = (strong = 1000) => {
