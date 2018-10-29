@@ -3,6 +3,7 @@ import {
   createProgram,
   createVbo,
   createIbo,
+  switchCulling,
 } from './utils';
 import deepForEach from './utils/deepForEach';
 
@@ -59,7 +60,7 @@ class Renderer {
     const pMatrix = new Matrix4().perspective(90, this._domElement.width / this._domElement.height, 0.1, 100);
 
     // children分回す
-    this._updateUniform(
+    this._renderChild(
       this._children,
       mMatrix,
       vMatrix,
@@ -96,7 +97,7 @@ class Renderer {
     this._gl.clear(this._gl.COLOR_BUFFER_BIT | this._gl.DEPTH_BUFFER_BIT);
   }
 
-  _updateUniform(children, parentModelMatrix, vMatrix, pMatrix) {
+  _renderChild(children, parentModelMatrix, vMatrix, pMatrix) {
     children.map((child) => {
       const obj = child.obj;
 
@@ -140,20 +141,8 @@ class Renderer {
           this._gl.disable(this._gl.BLEND);
         }
 
-        switch (material.side) {
-          case 'SIDE_DOUBLE':
-            this._gl.disable(this._gl.CULL_FACE);
-            break;
-          case 'SIDE_BACK':
-            this._gl.enable(this._gl.CULL_FACE);
-            this._gl.frontFace(this._gl.CW);
-            break;
-          case 'SIDE_FRONT':
-          default:
-            this._gl.enable(this._gl.CULL_FACE);
-            this._gl.frontFace(this._gl.CCW);
-            break;
-        }
+        // カリングを切り替える
+        switchCulling(this._gl, material.side);
 
         // IBOを生成
         if (geometry.index.length) {
@@ -174,7 +163,7 @@ class Renderer {
       }
 
       if (child.children) {
-        this._updateUniform(child.children, mMatrix.clone(), vMatrix, pMatrix);
+        this._renderChild(child.children, mMatrix.clone(), vMatrix, pMatrix);
       }
     });
   }

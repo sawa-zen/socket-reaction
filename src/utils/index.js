@@ -90,6 +90,26 @@ export const createIbo = (gl, data) => {
 }
 
 /**
+ * カリングの切り替え
+ */
+export const switchCulling = (gl, side) => {
+  switch (side) {
+    case 'SIDE_DOUBLE':
+      gl.disable(gl.CULL_FACE);
+      break;
+    case 'SIDE_BACK':
+      gl.enable(gl.CULL_FACE);
+      gl.frontFace(gl.CW);
+      break;
+    case 'SIDE_FRONT':
+    default:
+      gl.enable(gl.CULL_FACE);
+      gl.frontFace(gl.CCW);
+      break;
+  }
+}
+
+/**
  * ユニークな文字列を作成
  */
 export const getUniqueStr = (strong = 1000) => {
