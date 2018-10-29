@@ -141,6 +141,38 @@ export const registerAttribute = (
 }
 
 /**
+ * 座標変換行列をuniformに登録
+ */
+export const registerMvpUniform = (
+  gl,
+  prg,
+  mMatrix,
+  vMatrix,
+  pMatrix,
+) => {
+  const uniLocation = {
+    mMatrix: gl.getUniformLocation(prg, 'mMatrix'),
+    vMatrix: gl.getUniformLocation(prg, 'vMatrix'),
+    pMatrix: gl.getUniformLocation(prg, 'pMatrix')
+  };
+  gl.uniformMatrix4fv(
+    uniLocation.mMatrix,
+    false,
+    mMatrix,
+  );
+  gl.uniformMatrix4fv(
+    uniLocation.vMatrix,
+    false,
+    vMatrix,
+  );
+  gl.uniformMatrix4fv(
+    uniLocation.pMatrix,
+    false,
+    pMatrix,
+  );
+}
+
+/**
  * 深度テストを有効にする
  */
 export const enabledDepthTest = (gl) => {

@@ -4,6 +4,7 @@ import {
   createVbo,
   createIbo,
   registerAttribute,
+  registerMvpUniform,
   enabledDepthTest,
   switchBlending,
   switchCulling,
@@ -126,14 +127,7 @@ class Renderer {
         });
 
         // uniformLocationへ座標変換行列を登録
-        const uniLocation = {
-          mMatrix: this._gl.getUniformLocation(prg, 'mMatrix'),
-          vMatrix: this._gl.getUniformLocation(prg, 'vMatrix'),
-          pMatrix: this._gl.getUniformLocation(prg, 'pMatrix')
-        };
-        this._gl.uniformMatrix4fv(uniLocation.mMatrix, false, mMatrix);
-        this._gl.uniformMatrix4fv(uniLocation.vMatrix, false, vMatrix);
-        this._gl.uniformMatrix4fv(uniLocation.pMatrix, false, pMatrix);
+        registerMvpUniform(this._gl, prg, mMatrix, vMatrix, pMatrix);
 
         // 深度テストを有効
         enabledDepthTest(this._gl);
