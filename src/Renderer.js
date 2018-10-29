@@ -143,7 +143,7 @@ class Renderer {
       }
 
       if (child.children) {
-        this._renderChild(child.children, mMatrix.clone(), vMatrix, pMatrix);
+        this._renderChild(child.children, mMatrix, vMatrix, pMatrix);
       }
     });
   }
