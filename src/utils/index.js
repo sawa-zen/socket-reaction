@@ -141,6 +141,14 @@ export const registerAttribute = (
 }
 
 /**
+ * 深度テストを有効にする
+ */
+export const enabledDepthTest = (gl) => {
+  gl.enable(gl.DEPTH_TEST);
+  gl.depthFunc(gl.LEQUAL);
+}
+
+/**
  * カリングの切り替え
  */
 export const switchCulling = (gl, side) => {

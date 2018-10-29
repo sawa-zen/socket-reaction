@@ -4,6 +4,7 @@ import {
   createVbo,
   createIbo,
   registerAttribute,
+  enabledDepthTest,
   switchBlending,
   switchCulling,
   drawFace,
@@ -24,10 +25,6 @@ class Renderer {
 
     // gl
     this._gl = this._domElement.getContext('webgl') || this._domElement.getContext('experimental-webgl');
-
-    // 深度テストを有効
-    this._gl.enable(this._gl.DEPTH_TEST);
-    this._gl.depthFunc(this._gl.LEQUAL);
   }
 
   _children = [];
@@ -117,6 +114,7 @@ class Renderer {
         this._gl.useProgram(prg);
 
         Object.keys(geometry.attributes).map(key => {
+          // アトリビュートを登録
           const attribute = geometry.attributes[key];
           registerAttribute(
             this._gl,
@@ -136,6 +134,9 @@ class Renderer {
         this._gl.uniformMatrix4fv(uniLocation.mMatrix, false, mMatrix);
         this._gl.uniformMatrix4fv(uniLocation.vMatrix, false, vMatrix);
         this._gl.uniformMatrix4fv(uniLocation.pMatrix, false, pMatrix);
+
+        // 深度テストを有効
+        enabledDepthTest(this._gl);
 
         // ブレンディングを切り替え
         switchBlending(this._gl, material.transparent);
