@@ -22,9 +22,9 @@ class Object3D {
     return this._up;
   }
 
-  _rotate = [0, 0, 0];
-  get rotate() {
-    return this._rotate;
+  _rotation = [0, 0, 0];
+  get rotation() {
+    return this._rotation;
   }
 
   _children = [];
@@ -36,13 +36,21 @@ class Object3D {
     this._children.push(obj);
   }
 
+  lookAt(center) {
+    const vMatrix = new Matrix4().lookAt(
+      camera.position,
+      camera.center,
+      camera.up
+    );
+  }
+
   getModelMatrix() {
     const mMatrix = new Matrix4();
 
-    // TODO 三軸分に増やす
-    mMatrix.rotate(this.rotate[0], [0, 1, 0]);
-    mMatrix.rotate(this.rotate[1], [1, 0, 0]);
-    mMatrix.rotate(this.rotate[2], [0, 0, 1]);
+    // 三軸分
+    mMatrix.rotate(this.rotation[0], [0, 1, 0]);
+    mMatrix.rotate(this.rotation[1], [1, 0, 0]);
+    mMatrix.rotate(this.rotation[2], [0, 0, 1]);
     // モデル座標変換行列
     mMatrix.translate([this.position[0], this.position[1], this.position[2]]);
 

@@ -85,7 +85,7 @@ class Scene extends Object3D {
 
     this._mesh.position[1] = y / 3;
 
-    this.rotate[0] = rad;
+    this.rotation[0] = rad;
   }
 }
 
