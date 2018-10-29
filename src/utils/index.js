@@ -144,6 +144,22 @@ export const switchCulling = (gl, side) => {
 }
 
 /**
+ * ブレンディングの切り替え
+ */
+export const switchBlending = (gl, transparent) => {
+  if (transparent) {
+    // ブレンディングを有効
+    gl.enable(gl.BLEND);
+    gl.blendFunc(
+      gl.SRC_ALPHA,
+      gl.ONE_MINUS_SRC_ALPHA,
+    );
+  } else {
+    gl.disable(gl.BLEND);
+  }
+}
+
+/**
  * ユニークな文字列を作成
  */
 export const getUniqueStr = (strong = 1000) => {
