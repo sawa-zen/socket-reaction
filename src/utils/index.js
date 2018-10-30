@@ -135,15 +135,7 @@ export const registerMvpUniform = (
 ) => {
   // TODO uniLocationは毎回作る必要はない
   const uniLocation = {
-    mMatrix: gl.getUniformLocation(prg, 'mMatrix'),
-    vMatrix: gl.getUniformLocation(prg, 'vMatrix'),
-    pMatrix: gl.getUniformLocation(prg, 'pMatrix')
   };
-  gl.uniformMatrix4fv(
-    uniLocation.mMatrix,
-    false,
-    mMatrix,
-  );
   gl.uniformMatrix4fv(
     uniLocation.vMatrix,
     false,

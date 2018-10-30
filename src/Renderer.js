@@ -9,8 +9,6 @@ import {
   drawFace,
   clearColor,
 } from './utils';
-import deepForEach from './utils/deepForEach';
-
 /**
  * レンダラー
  */
@@ -51,15 +49,20 @@ class Renderer {
       );
 
       // アトリビュートを登録
-      data.attributes = [];
-      Object.keys(geometry.attributes).map(key => {
+      data.attributes = Object.keys(geometry.attributes).map(key => {
         const attribute = geometry.attributes[key];
         const attributeInfo = {};
         // VBOを作成
         attributeInfo.vbo = createVbo(this._gl, attribute.verticies);
         attributeInfo.attrLoc = this._gl.getAttribLocation(data.program, key);
         attributeInfo.stride = attribute.stride;
-        data.attributes.push(attributeInfo);
+        return attributeInfo;
+      });
+
+      // ユニフォームを登録
+      data.uniforms = {};
+      Object.keys(material.uniforms).forEach(key => {
+        data.uniforms[key] = this._gl.getUniformLocation(data.program, key);
       });
     }
 
@@ -140,7 +143,18 @@ class Renderer {
         this._gl.useProgram(prg);
 
         // uniformLocationへ座標変換行列を登録
-        registerMvpUniform(this._gl, prg, mMatrix, vMatrix, pMatrix);
+        material.uniforms.mMatrix.value = mMatrix;
+        material.uniforms.vMatrix.value = vMatrix;
+        material.uniforms.pMatrix.value = pMatrix;
+        Object.keys(child.uniforms).forEach(key => {
+          const uniformLoc = child.uniforms[key];
+          const uniform = material.uniforms[key];
+          switch (uniform.type) {
+            case 'v4':
+              this._gl.uniformMatrix4fv(uniformLoc, false, uniform.value);
+              break;
+          }
+        });
 
         // 深度テストを有効
         enabledDepthTest(this._gl);

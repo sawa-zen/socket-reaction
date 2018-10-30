@@ -1,7 +1,22 @@
+import Matrix4 from './Matrix4';
+
 class Material {
-  _uniform = {};
-  get uniform() {
-    return this._uniform;
+  _uniforms = {
+    mMatrix: {
+      type: 'v4',
+      value: new Matrix4(),
+    },
+    vMatrix: {
+      type: 'v4',
+      value: new Matrix4(),
+    },
+    pMatrix: {
+      type: 'v4',
+      value: new Matrix4(),
+    },
+  };
+  get uniforms() {
+    return this._uniforms;
   }
 
   get vertexShader() {
@@ -25,7 +40,10 @@ class Material {
   }
 
   constructor(parametars = {}) {
-    this._uniform = parametars.uniform || {};
+    this._uniforms = {
+      ...this._uniforms,
+      ...parametars.uniforms,
+    };
     this._vertexShader = parametars.vertexShader;
     this._fragmentShader = parametars.fragmentShader;
     this._transparent = !!parametars.transparent;
