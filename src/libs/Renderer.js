@@ -8,7 +8,7 @@ import {
   switchCulling,
   drawFace,
   clearColor,
-} from './utils';
+} from '../utils';
 /**
  * レンダラー
  */

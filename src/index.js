@@ -1,4 +1,4 @@
-import Renderer from './Renderer';
+import { Renderer } from './libs';
 import Scene from './Scene';
 
 class SocketReaction {

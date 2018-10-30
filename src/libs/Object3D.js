@@ -1,4 +1,4 @@
-import { getUniqueStr } from './utils';
+import { getUniqueStr } from '../utils';
 import Matrix4 from './Matrix4';
 
 class Object3D {

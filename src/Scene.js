@@ -1,7 +1,9 @@
-import Object3D from './Object3D';
-import Mesh from './Mesh';
-import Geometry from './Geometry';
-import Material from './Material';
+import {
+  Object3D,
+  Geometry,
+  Material,
+  Mesh,
+} from './libs';
 const vertexShader = require('./shader/vertex.glsl');
 const fragmentShader = require('./shader/fragment.glsl');
 
