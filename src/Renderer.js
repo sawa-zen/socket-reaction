@@ -142,7 +142,7 @@ class Renderer {
         // 使用するプログラムを指定
         this._gl.useProgram(prg);
 
-        // uniformLocationへ座標変換行列を登録
+        // uniformの値を反映
         material.uniforms.mMatrix.value = mMatrix;
         material.uniforms.vMatrix.value = vMatrix;
         material.uniforms.pMatrix.value = pMatrix;
