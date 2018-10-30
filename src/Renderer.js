@@ -28,15 +28,49 @@ class Renderer {
     this._gl = this._domElement.getContext('webgl') || this._domElement.getContext('experimental-webgl');
   }
 
+  setSize(w, h) {
+    this._domElement.width = w;
+    this._domElement.height = h;
+    this._gl.viewport(0, 0, this._gl.canvas.width, this._gl.canvas.height);
+  }
+
   _children = [];
   add(obj) {
     this._createProgram(obj, this._children);
   }
 
-  setSize(w, h) {
-    this._domElement.width = w;
-    this._domElement.height = h;
-    this._gl.viewport(0, 0, this._gl.canvas.width, this._gl.canvas.height);
+  _createProgram(obj, container) {
+    const data = { obj };
+    if (obj.type === 'Mesh') {
+      const geometry = obj.geometry;
+      const material = obj.material;
+
+      // プログラムオブジェクトの生成とリンク
+      data.program = createProgram(
+        this._gl,
+        material.vertexShader,
+        material.fragmentShader,
+      );
+
+      // アトリビュートを登録
+      data.attributes = [];
+      Object.keys(geometry.attributes).map(key => {
+        const attribute = geometry.attributes[key];
+        const attributeInfo = {};
+        // VBOを作成
+        attributeInfo.vbo = createVbo(this._gl, attribute.verticies);
+        attributeInfo.attrLoc = this._gl.getAttribLocation(data.program, key);
+        attributeInfo.stride = attribute.stride;
+        data.attributes.push(attributeInfo);
+      });
+    }
+
+    data.children = [];
+    obj.children.map((child) => {
+      this._createProgram(child, data.children);
+    });
+
+    container.push(data);
   }
 
   render() {
@@ -78,27 +112,6 @@ class Renderer {
     this._gl.flush();
   }
 
-  _createProgram(obj, container) {
-    const data = { obj };
-    if (obj.type === 'Mesh') {
-      const material = obj.material;
-      // プログラムオブジェクトの生成とリンク
-      const prg = createProgram(
-        this._gl,
-        material.vertexShader,
-        material.fragmentShader,
-      );
-      data.program = prg;
-    }
-
-    data.children = [];
-    obj.children.map((child) => {
-      this._createProgram(child, data.children);
-    });
-
-    container.push(data);
-  }
-
   _renderChild(children, parentModelMatrix, vMatrix, pMatrix) {
     children.map((child) => {
       const obj = child.obj;
@@ -114,15 +127,17 @@ class Renderer {
         // 使用するプログラムを指定
         this._gl.useProgram(prg);
 
-        Object.keys(geometry.attributes).map(key => {
-          // アトリビュートを登録
-          const attribute = geometry.attributes[key];
-          registerAttribute(
-            this._gl,
-            prg,
-            key,
-            attribute.verticies,
+        child.attributes.forEach(attribute => {
+          // アトリビュートを許可
+          this._gl.bindBuffer(this._gl.ARRAY_BUFFER, attribute.vbo);
+          // TODO enableVertexAttribArrayは処理が重いので
+          // 不要であれば呼び出さない
+          this._gl.enableVertexAttribArray(attribute.attrLoc);
+          this._gl.vertexAttribPointer(
+            attribute.attrLoc,
             attribute.stride,
+            this._gl.FLOAT,
+            false, 0, 0
           );
         });
 
@@ -140,6 +155,9 @@ class Renderer {
 
         // 面を描画
         drawFace(this._gl, geometry.index);
+
+        // バッファを開放
+        this._gl.bindBuffer(this._gl.ARRAY_BUFFER, null);
       }
 
       if (child.children) {

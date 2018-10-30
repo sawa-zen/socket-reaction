@@ -80,7 +80,7 @@ export const createProgram = (
 /**
  * VBOを生成する
  */
-export const createVbo = (gl, data) => {
+export const createVbo = (gl, verticies) => {
   // バッファオブジェクトの生成
   const vbo = gl.createBuffer();
 
@@ -90,7 +90,7 @@ export const createVbo = (gl, data) => {
   // バッファにデータをセット
   gl.bufferData(
     gl.ARRAY_BUFFER,
-    new Float32Array(data),
+    new Float32Array(verticies),
     gl.STATIC_DRAW,
   );
 
@@ -124,23 +124,6 @@ export const createIbo = (gl, data) => {
 }
 
 /**
- * アトリビュートを登録
- */
-export const registerAttribute = (
-  gl,
-  prg,
-  key,
-  verticies,
-  stride,
-) => {
-  const vbo = createVbo(gl, verticies);
-  const attrLoc = gl.getAttribLocation(prg, key);
-  gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-  gl.enableVertexAttribArray(attrLoc);
-  gl.vertexAttribPointer(attrLoc, stride, gl.FLOAT, false, 0, 0);
-}
-
-/**
  * 座標変換行列をuniformに登録
  */
 export const registerMvpUniform = (
@@ -150,6 +133,7 @@ export const registerMvpUniform = (
   vMatrix,
   pMatrix,
 ) => {
+  // TODO uniLocationは毎回作る必要はない
   const uniLocation = {
     mMatrix: gl.getUniformLocation(prg, 'mMatrix'),
     vMatrix: gl.getUniformLocation(prg, 'vMatrix'),
