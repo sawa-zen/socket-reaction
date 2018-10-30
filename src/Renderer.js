@@ -2,8 +2,6 @@ import Matrix4 from './Matrix4';
 import {
   createProgram,
   createVbo,
-  createIbo,
-  registerAttribute,
   registerMvpUniform,
   enabledDepthTest,
   switchBlending,
@@ -124,9 +122,6 @@ class Renderer {
         const material = obj.material;
         const prg = child.program;
 
-        // 使用するプログラムを指定
-        this._gl.useProgram(prg);
-
         child.attributes.forEach(attribute => {
           // アトリビュートを許可
           this._gl.bindBuffer(this._gl.ARRAY_BUFFER, attribute.vbo);
@@ -140,6 +135,9 @@ class Renderer {
           // バッファを開放
           this._gl.bindBuffer(this._gl.ARRAY_BUFFER, null);
         });
+
+        // 使用するプログラムを指定
+        this._gl.useProgram(prg);
 
         // uniformLocationへ座標変換行列を登録
         registerMvpUniform(this._gl, prg, mMatrix, vMatrix, pMatrix);
