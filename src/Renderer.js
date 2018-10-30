@@ -130,8 +130,6 @@ class Renderer {
         child.attributes.forEach(attribute => {
           // アトリビュートを許可
           this._gl.bindBuffer(this._gl.ARRAY_BUFFER, attribute.vbo);
-          // TODO enableVertexAttribArrayは処理が重いので
-          // 不要であれば呼び出さない
           this._gl.enableVertexAttribArray(attribute.attrLoc);
           this._gl.vertexAttribPointer(
             attribute.attrLoc,
@@ -139,6 +137,8 @@ class Renderer {
             this._gl.FLOAT,
             false, 0, 0
           );
+          // バッファを開放
+          this._gl.bindBuffer(this._gl.ARRAY_BUFFER, null);
         });
 
         // uniformLocationへ座標変換行列を登録
@@ -155,9 +155,6 @@ class Renderer {
 
         // 面を描画
         drawFace(this._gl, geometry.index);
-
-        // バッファを開放
-        this._gl.bindBuffer(this._gl.ARRAY_BUFFER, null);
       }
 
       if (child.children) {
