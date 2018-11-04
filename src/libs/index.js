@@ -4,3 +4,4 @@ export { default as Object3D } from './Object3D';
 export { default as Geometry } from './Geometry';
 export { default as Material } from './Material';
 export { default as Mesh } from './Mesh';
+export { default as Scene } from './Scene';

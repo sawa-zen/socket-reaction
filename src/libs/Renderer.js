@@ -17,6 +17,10 @@ class Renderer {
     return this._domElement;
   }
 
+  _renderList = [];
+  _vMatrix = new Matrix4();
+  _pMatrix = new Matrix4();
+
   constructor() {
     this._domElement = document.createElement('canvas');
 
@@ -28,58 +32,12 @@ class Renderer {
     this._domElement.width = w;
     this._domElement.height = h;
     this._gl.viewport(0, 0, this._gl.canvas.width, this._gl.canvas.height);
+    this._pMatrix.perspective(90, w / h, 0.1, 100);
   }
 
-  _children = [];
-  add(obj) {
-    this._createProgram(obj, this._children);
-  }
-
-  _createProgram(obj, container) {
-    const data = { obj };
-    if (obj.type === 'Mesh') {
-      const geometry = obj.geometry;
-      const material = obj.material;
-
-      // プログラムオブジェクトの生成とリンク
-      data.program = createProgram(
-        this._gl,
-        material.vertexShader,
-        material.fragmentShader,
-      );
-
-      // アトリビュートを登録
-      data.attributes = Object.keys(geometry.attributes).map(key => {
-        const attribute = geometry.attributes[key];
-        const attributeInfo = {};
-        // VBOを作成
-        attributeInfo.vbo = createVbo(this._gl, attribute.verticies);
-        attributeInfo.attrLoc = this._gl.getAttribLocation(data.program, key);
-        attributeInfo.stride = attribute.stride;
-        return attributeInfo;
-      });
-
-      // ユニフォームを登録
-      data.uniforms = {};
-      Object.keys(material.uniforms).forEach(key => {
-        data.uniforms[key] = this._gl.getUniformLocation(data.program, key);
-      });
-    }
-
-    data.children = [];
-    obj.children.map((child) => {
-      this._createProgram(child, data.children);
-    });
-
-    container.push(data);
-  }
-
-  render() {
+  render(scene) {
     // canvasをクリア
     clearColor(this._gl);
-
-    // モデル座標変換行列のベース
-    const mMatrix = new Matrix4();
 
     // ビュー座標変換行列
     const camera = {
@@ -87,92 +45,119 @@ class Renderer {
       center: [0, 0, 0],
       up: [0, 1, 0]
     };
-    const vMatrix = new Matrix4().lookAt(
+    this._vMatrix.lookAt(
       camera.position,
       camera.center,
       camera.up
     );
 
-    // プロジェクション座標変換行列
-    const pMatrix = new Matrix4().perspective(
-      90,
-      this._domElement.width / this._domElement.height,
-      0.1,
-      100,
-    );
+    scene.updateMatrixWorld();
 
-    // children分回す
-    this._renderChild(
-      this._children,
-      mMatrix,
-      vMatrix,
-      pMatrix,
-    );
+    if (scene.needsUpdate) {
+      this._projectObject(scene);
+      scene.needsUpdate = false;
+    }
+
+    // オブジェクトを描画する
+    this._renderList.forEach(renderItem => {
+      this._renderObj(renderItem);
+    });
 
     // コンテキストの再描画
     this._gl.flush();
   }
 
-  _renderChild(children, parentModelMatrix, vMatrix, pMatrix) {
-    children.map((child) => {
-      const obj = child.obj;
+  _projectObject(obj) {
+    this._renderList = [];
+    if (obj.type === 'Mesh') {
+      // プログラムオブジェクトの生成とリンク
+      const program = createProgram(
+        this._gl,
+        obj.material.vertexShader,
+        obj.material.fragmentShader,
+      );
 
-      const mMatrix = parentModelMatrix.clone().multiply(obj.getModelMatrix());
+      // アトリビュートを登録
+      const attributes = Object.keys(obj.geometry.attributes).map(key => {
+        const attribute = obj.geometry.attributes[key];
+        const attributeInfo = {};
+        // VBOを作成
+        attributeInfo.vbo = createVbo(this._gl, attribute.verticies);
+        attributeInfo.attrLoc = this._gl.getAttribLocation(program, key);
+        attributeInfo.stride = attribute.stride;
+        return attributeInfo;
+      });
 
-      // Meshでなければ無視する
-      if (obj.type === 'Mesh') {
-        const geometry = obj.geometry;
-        const material = obj.material;
-        const prg = child.program;
+      // ユニフォームを登録
+      const uniforms = {};
+      Object.keys(obj.material.uniforms).forEach(key => {
+        uniforms[key] = this._gl.getUniformLocation(program, key);
+      });
 
-        child.attributes.forEach(attribute => {
-          // アトリビュートを許可
-          this._gl.bindBuffer(this._gl.ARRAY_BUFFER, attribute.vbo);
-          this._gl.enableVertexAttribArray(attribute.attrLoc);
-          this._gl.vertexAttribPointer(
-            attribute.attrLoc,
-            attribute.stride,
-            this._gl.FLOAT,
-            false, 0, 0
-          );
-          // バッファを開放
-          this._gl.bindBuffer(this._gl.ARRAY_BUFFER, null);
-        });
+      const renderItem = {
+        obj,
+        program,
+        attributes,
+        uniforms,
+      };
+      this._renderList.push(renderItem);
+    }
 
-        // 使用するプログラムを指定
-        this._gl.useProgram(prg);
+    obj.children.forEach(child => {
+      this._projectObject(child);
+    });
+  }
 
-        // uniformの値を反映
-        material.uniforms.mMatrix.value = mMatrix;
-        material.uniforms.vMatrix.value = vMatrix;
-        material.uniforms.pMatrix.value = pMatrix;
-        Object.keys(child.uniforms).forEach(key => {
-          const uniformLoc = child.uniforms[key];
-          const uniform = material.uniforms[key];
-          switch (uniform.type) {
-            case 'v4':
-              this._gl.uniformMatrix4fv(uniformLoc, false, uniform.value);
-              break;
-          }
-        });
+  _renderObj(renderItem) {
+    const obj = renderItem.obj;
+    const prg = renderItem.program;
+    const attributes = renderItem.attributes;
+    const uniforms = renderItem.uniforms;
+    const geometry = obj.geometry;
+    const material = obj.material;
 
-        // 深度テストを有効
-        enabledDepthTest(this._gl);
+    attributes.forEach(attribute => {
+      // アトリビュートを許可
+      this._gl.bindBuffer(this._gl.ARRAY_BUFFER, attribute.vbo);
+      this._gl.enableVertexAttribArray(attribute.attrLoc);
+      this._gl.vertexAttribPointer(
+        attribute.attrLoc,
+        attribute.stride,
+        this._gl.FLOAT,
+        false, 0, 0
+      );
+      // バッファを開放
+      this._gl.bindBuffer(this._gl.ARRAY_BUFFER, null);
+    });
 
-        // ブレンディングを切り替え
-        switchBlending(this._gl, material.transparent);
+    // 使用するプログラムを指定
+    this._gl.useProgram(prg);
 
-        // カリングを切り替える
-        switchCulling(this._gl, material.side);
-
-        // 面を描画
-        drawFace(this._gl, geometry.index);
-      }
-
-      if (child.children) {
-        this._renderChild(child.children, mMatrix, vMatrix, pMatrix);
+    // uniformの値を反映
+    material.uniforms.mMatrix.value = obj.matrix.multiply(obj.matrixWorld);
+    material.uniforms.vMatrix.value = this._vMatrix;
+    material.uniforms.pMatrix.value = this._pMatrix;
+    Object.keys(uniforms).forEach(key => {
+      const uniformLoc = uniforms[key];
+      const uniform = material.uniforms[key];
+      switch (uniform.type) {
+        case 'v4':
+          this._gl.uniformMatrix4fv(uniformLoc, false, uniform.value);
+          break;
       }
     });
+
+    // 深度テストを有効
+    enabledDepthTest(this._gl);
+
+    // ブレンディングを切り替え
+    switchBlending(this._gl, material.transparent);
+
+    // カリングを切り替える
+    switchCulling(this._gl, material.side);
+
+    // 面を描画
+    drawFace(this._gl, geometry.index);
   }
 }
 

@@ -22,14 +22,19 @@ class Matrix4 extends Float32Array {
    * 渡されたMatrixを掛け合わせる
    */
   multiply(mat) {
-    const a = this[0],  b = this[1],  c = this[2],  d = this[3],
-          e = this[4],  f = this[5],  g = this[6],  h = this[7],
-          i = this[8],  j = this[9],  k = this[10], l = this[11],
-          m = this[12], n = this[13], o = this[14], p = this[15];
-    const A = mat[0],   B = mat[1],   C = mat[2],   D = mat[3],
-          E = mat[4],   F = mat[5],   G = mat[6],   H = mat[7],
-          I = mat[8],   J = mat[9],   K = mat[10],  L = mat[11],
-          M = mat[12],  N = mat[13],  O = mat[14],  P = mat[15];
+    this.multiplyMatrices(this, mat);
+    return this;
+  }
+
+  multiplyMatrices(aMat, bMat) {
+    const a = aMat[0],  b = aMat[1],  c = aMat[2],  d = aMat[3],
+          e = aMat[4],  f = aMat[5],  g = aMat[6],  h = aMat[7],
+          i = aMat[8],  j = aMat[9],  k = aMat[10], l = aMat[11],
+          m = aMat[12], n = aMat[13], o = aMat[14], p = aMat[15];
+    const A = bMat[0],  B = bMat[1],  C = bMat[2],  D = bMat[3],
+          E = bMat[4],  F = bMat[5],  G = bMat[6],  H = bMat[7],
+          I = bMat[8],  J = bMat[9],  K = bMat[10], L = bMat[11],
+          M = bMat[12], N = bMat[13], O = bMat[14], P = bMat[15];
     this[0]  = A * a + B * e + C * i + D * m;
     this[1]  = A * b + B * f + C * j + D * n;
     this[2]  = A * c + B * g + C * k + D * o;
@@ -294,6 +299,19 @@ class Matrix4 extends Float32Array {
     newMat[15] = p;
 
     return newMat;
+  }
+
+  /**
+   * 渡されたMatrix4の値を自分へコピーする
+   */
+  copy(mat) {
+
+    this[0]  = mat[0];  this[1]  = mat[1];  this[2]  = mat[2];  this[3]  = mat[3];
+    this[4]  = mat[4];  this[5]  = mat[5];  this[6]  = mat[6];  this[7]  = mat[7];
+    this[8]  = mat[8];  this[9]  = mat[9];  this[10] = mat[10]; this[11] = mat[11];
+    this[12] = mat[12]; this[13] = mat[13]; this[14] = mat[14]; this[15] = mat[15];
+
+    return this;
   }
 }
 

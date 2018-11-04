@@ -27,34 +27,59 @@ class Object3D {
     return this._rotation;
   }
 
+  _parent = null;
+  get parent() {
+    return this._parent;
+  }
+  set parent(obj) {
+    this._parent = obj;
+  }
+
   _children = [];
   get children() {
     return this._children;
   }
 
+  _matrix = new Matrix4();
+  get matrix() {
+    return this._matrix;
+  }
+
+  _matrixWorld = new Matrix4();
+  get matrixWorld() {
+    return this._matrixWorld;
+  }
+
   add(obj) {
     this._children.push(obj);
+    obj.parent = this;
   }
 
-  lookAt(center) {
-    const vMatrix = new Matrix4().lookAt(
-      camera.position,
-      camera.center,
-      camera.up
-    );
-  }
-
-  getModelMatrix() {
-    const mMatrix = new Matrix4();
-
+  updateMatrix() {
+    // 初期化
+    this._matrix.identity();
     // 三軸分
-    mMatrix.rotate(this.rotation[0], [0, 1, 0]);
-    mMatrix.rotate(this.rotation[1], [1, 0, 0]);
-    mMatrix.rotate(this.rotation[2], [0, 0, 1]);
+    this._matrix.rotate(this.rotation[0], [0, 1, 0]);
+    this._matrix.rotate(this.rotation[1], [1, 0, 0]);
+    this._matrix.rotate(this.rotation[2], [0, 0, 1]);
     // モデル座標変換行列
-    mMatrix.translate([this.position[0], this.position[1], this.position[2]]);
+    this._matrix.translate([this.position[0], this.position[1], this.position[2]]);
+  }
 
-    return mMatrix;
+  updateMatrixWorld() {
+    this.updateMatrix();
+
+    if (this._parent === null) {
+      this._matrixWorld.copy(this.matrix);
+    } else {
+      this._matrixWorld.multiplyMatrices(this._parent.matrixWorld, this._matrix);
+    }
+
+    // update children
+    const children = this._children;
+    for (var i = 0, l = children.length; i < l; i ++) {
+      children[i].updateMatrixWorld();
+    }
   }
 }
 
