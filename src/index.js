@@ -1,5 +1,6 @@
 import { Renderer } from './libs';
 import MainScene from './MainScene';
+import Stats from './Stats';
 
 class SocketReaction {
   get domElement() {
@@ -16,6 +17,8 @@ class SocketReaction {
 
     // メインシーン
     this._scene = new MainScene();
+
+    this._stats = new Stats();
 
     // 更新
     this._update();
@@ -34,9 +37,13 @@ class SocketReaction {
   }
 
   _update = () => {
-    this._scene.update()
+    this._stats.begin();
+
+    this._scene.update();
 
     this._renderer.render(this._scene);
+
+    this._stats.end();
 
     this._animationFrameId = requestAnimationFrame(this._update);
   };

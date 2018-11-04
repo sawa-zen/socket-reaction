@@ -54,6 +54,7 @@ class Renderer {
     scene.updateMatrixWorld();
 
     if (scene.needsUpdate) {
+      this._renderList = [];
       this._projectObject(scene);
       scene.needsUpdate = false;
     }
@@ -68,7 +69,6 @@ class Renderer {
   }
 
   _projectObject(obj) {
-    this._renderList = [];
     if (obj.type === 'Mesh') {
       // プログラムオブジェクトの生成とリンク
       const program = createProgram(
@@ -134,7 +134,7 @@ class Renderer {
     this._gl.useProgram(prg);
 
     // uniformの値を反映
-    material.uniforms.mMatrix.value = obj.matrix.multiply(obj.matrixWorld);
+    material.uniforms.mMatrix.value = obj.matrixWorld.multiply(obj.matrix);
     material.uniforms.vMatrix.value = this._vMatrix;
     material.uniforms.pMatrix.value = this._pMatrix;
     Object.keys(uniforms).forEach(key => {
